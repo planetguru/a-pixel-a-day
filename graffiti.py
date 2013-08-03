@@ -1,59 +1,62 @@
 #!/usr/bin/python
 
 # A Pixel A Day
+# @TODO - commit should register current position to enable restart
+# first step would then be a git pull and seek to current bit position
 
 import json
 import time
 import math
+import sys
 import subprocess
+import os
 
-tableau = "/Users/clacy/Development/web/tableau/README.md"
+print("sdf")
+tableauFile = "README.md"
+tableauDir = "/Users/clacy/Development/web/tableau/"
+tableau = tableauDir + tableauFile
 toPrint = "GRAFITTI"
 
 fontConfig = json.loads(open('font.json').read())
 fontWidth = int(fontConfig['font']['fontWidth'])+1
 
 #startDay = get today's date
-startDay = int(time.time())/86400 # as days since epoch
+startDay = (int(time.time())/86400) # days since epoch 
 daysOfWorkingWeek=[2,3,4,5,6]
 
 # maintain record of last day a commit was made
 # update this whenever a commit is made 
 # check this to prevent >1 commits per day
 
-lastCommitDay = (int(time.time())/86400)-1
-
-
-commit();
-
-while True:
-	commit()
-	time.sleep(3600)
-
-def commit():
+def commit(lastCommitDay):
 	dayOfWeek = time.strftime("%w") # int value
 	today = int(time.time())/86400
 
 	# check lastCommitDay
-	if today == lastCommitDay:
-		# do nothing
-	elif dayOfWeek == 1 or dayOfWeek == 7:
-		# don't commit on monday or sunday 
-		# todo - make this fontConfig (fontHeight) aware
-		# do nothing
-	else:
+	if today != lastCommitDay and dayOfWeek != 1 and dayOfWeek != 7:
+		print("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
 		# determine whether commit should happen today
 		daysSinceStart = today - startDay
-		currentChar = daysSinceStart / fontWidth	
-		currentChar = math.ceil(currentChar) # daysSinceStart: 1->1, 2->1, 3->1, 4->1, 5->1, 6->2
-						     # daysSinceStart: 32->7 33->7 34->7 35->8 36->8 37->8
-		currentChar = toPrint[currentChar]   # say, 'R' in GRAFFITI
-		columnInDay = daysSinceStart - ((currentChar-1)*5)
-		if( fontConfig['font']['letters'][currentChar][columnInDay] == 1):
-			with open(tableau, "a") as f:
-				f.write(" ")
-			subprocess.call(["git","commit",tableau,"-m","pixel"])
-			subprocess.call(["git","push", "origin", "master"])
+		currentChar = float(daysSinceStart) / float(fontWidth)
+		currentCharIndex = int(math.ceil(currentChar)) 
+		currentChar = str(toPrint[currentCharIndex])   # say, 'R' in GRAFFITI
+		columnInDay = str(daysSinceStart - ((currentCharIndex-1)*5))
+		bit = int(dayOfWeek)-1
+		# only commit if the bit in this position is a 1
+		if( fontConfig['font']['letters'][currentChar][columnInDay][bit] == str(1)):
+			fo=open(tableau,"a")
+			fo.write("-")
+			fo.close();
+			os.chdir(tableauDir)
+			subprocess.call(['git', 'commit', '--allow-empty-message', '-m', '""', 'README.md'])
+			subprocess.call(['git', 'push', 'origin', 'master'])
 
 		# prevent any more commit attempts today
 		lastCommitDay = today;
+
+lastCommitDay = (int(time.time())/86400)-1
+commit(lastCommitDay)
+
+while True:
+	commit(lastCommitDay)
+	time.sleep(3600) 
