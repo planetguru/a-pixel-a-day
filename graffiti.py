@@ -40,7 +40,7 @@ def commit(lastCommitDay):
 		currentChar = float(daysSinceStart) / float(fontWidth)
 		currentCharIndex = int(math.ceil(currentChar)) 
 		currentChar = str(toPrint[currentCharIndex])   # say, 'R' in GRAFFITI
-		columnInDay = str(daysSinceStart - ((currentCharIndex-1)*5))
+		columnInDay = str(daysSinceStart - ((currentCharIndex-1)*5)-1) # -1 because the column names are not zero-based
 		bit = int(dayOfWeek)-1
 		# only commit if the bit in this position is a 1
 		if( fontConfig['font']['letters'][currentChar][columnInDay][bit] == str(1)):
