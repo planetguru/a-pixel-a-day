@@ -11,7 +11,6 @@ import sys
 import subprocess
 import os
 
-print("sdf")
 tableauFile = "README.md"
 tableauDir = "/Users/clacy/Development/web/tableau/"
 tableau = tableauDir + tableauFile
@@ -34,7 +33,7 @@ def commit(lastCommitDay):
 
 	# check lastCommitDay
 	if today != lastCommitDay and dayOfWeek != 1 and dayOfWeek != 7:
-		print("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
+		#print("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
 		# determine whether commit should happen today
 		daysSinceStart = today - startDay
 		currentChar = float(daysSinceStart) / float(fontWidth)
