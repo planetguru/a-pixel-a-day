@@ -12,9 +12,9 @@ import subprocess
 import os
 
 tableauFile = "README.md"
-tableauDir = "/Users/clacy/Development/web/tableau/"
+tableauDir = "/export/tableau/" #/Users/clacy/Development/web/tableau/"
 tableau = tableauDir + tableauFile
-toPrint = "GRAFITTI"
+toPrint = "&BOO"; # use & for testing. It is all '1's
 
 fontConfig = json.loads(open('font.json').read())
 fontWidth = int(fontConfig['font']['fontWidth'])+1
@@ -33,7 +33,7 @@ def commit(lastCommitDay):
 
 	# check lastCommitDay
 	if today != lastCommitDay and dayOfWeek != 1 and dayOfWeek != 7:
-		#print("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
+		print("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
 		# determine whether commit should happen today
 		daysSinceStart = today - startDay
 		currentChar = float(daysSinceStart) / float(fontWidth)
@@ -42,13 +42,14 @@ def commit(lastCommitDay):
 		columnInDay = str(daysSinceStart - ((currentCharIndex-1)*5)-1) # -1 because the column names are not zero-based
 		bit = int(dayOfWeek)-1
 		# only commit if the bit in this position is a 1
+		print(" bool is "+fontConfig['font']['letters'][currentChar][columnInDay][bit]+" for col "+columnInDay)
 		if( fontConfig['font']['letters'][currentChar][columnInDay][bit] == str(1)):
 			fo=open(tableau,"a")
 			fo.write("-")
 			fo.close();
 			os.chdir(tableauDir)
-			subprocess.call(['git', 'commit', '--allow-empty-message', '-m', '""', 'README.md'])
-			subprocess.call(['git', 'push', 'origin', 'master'])
+			subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
+			subprocess.call(['git', 'push'])
 
 		# prevent any more commit attempts today
 		lastCommitDay = today;
