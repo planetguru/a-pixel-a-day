@@ -12,11 +12,11 @@ import subprocess
 import os
 import pprint
 
-tableauFile = "README.md"
-#tableauDir = "/export/tableau/" 
-tableauDir = "/Users/clacy/Development/web/tableau/"
+tableauFile = "tableau.txt"
+tableauDir = "/export/a-pixel-a-day/" 
+#tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
-toPrint = "&ROO"; # use & for testing. It is all '1's
+toPrint = "&YAHOO"; # use & for testing. It is all '1's
 
 fontConfig = json.loads(open('font.json').read())
 fontWidth = int(fontConfig['font']['fontWidth'])+1
@@ -33,7 +33,7 @@ workingDays = [1,2,3,4,5]
 
 def commit():
 	# update today to move forward from lastCommitDay on the turn of midnight
-	today = int(time.time()/86400) + 8 
+	today = int(time.time()/86400) + 0 
 
 	# check lastCommitDay
 	global lastCommitDay
