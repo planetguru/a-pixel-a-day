@@ -21,7 +21,6 @@ toPrint = "&ROO"; # use & for testing. It is all '1's
 fontConfig = json.loads(open('font.json').read())
 fontWidth = int(fontConfig['font']['fontWidth'])+1
 
-#startDay = get today's date
 startDay = int(time.time())/86400 # days since epoch 
 today = startDay
 
@@ -33,15 +32,13 @@ workingDays = [1,2,3,4,5]
 
 def commit():
 	# update today to move forward from lastCommitDay on the turn of midnight
-	today = int(time.time()/86400) + 8 
+	today = int(time.time()/86400) 
 
 	# check lastCommitDay
 	global lastCommitDay
 	if today != lastCommitDay:
-		print("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
 		# determine whether commit should happen today
 		daysSinceStart = today - startDay
-		print("days since start is "+str(daysSinceStart))
 		currentCharIndex = 0  # identifies which char in the string we are at
 		if( daysSinceStart > 0):   
 			currentCharIndex = int(math.ceil(float(daysSinceStart)/fontWidth)) - 1
