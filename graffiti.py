@@ -47,10 +47,11 @@ def commit():
 	if today != lastCommitDay:
 		# determine whether commit should happen today
 		daysSinceStart = today - startDay
-		print("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
+		f = open('/tmp/pad-log.txt', 'a')
+		f.write("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
 		# determine whether commit should happen today
 		daysSinceStart = today - startDay
-		print("days since start is "+str(daysSinceStart))
+		f.write("days since start is "+str(daysSinceStart))
 		currentCharIndex = 0  # identifies which char in the string we are at
 		if( daysSinceStart > 0):   
 			currentCharIndex = int(math.ceil(float(daysSinceStart)/fontWidth)) - 1
@@ -59,7 +60,8 @@ def commit():
 		columnInChar = str((daysSinceStart % 5)+1)
 		global dayOfWeek
 		bit = int(dayOfWeek)-1
-		print ("currentCharIndex is "+str(currentCharIndex)+" so currentChar is "+currentChar+" column in day is "+columnInChar+" bit is "+str(bit))
+		f.write("currentCharIndex is "+str(currentCharIndex)+" so currentChar is "+currentChar+" column in day is "+columnInChar+" bit is "+str(bit))
+		f.close()
 		# only commit if the bit in this position is a 1
 		pprint.pprint(fontConfig['font']['letters'][currentChar][columnInChar][bit])
 		if( fontConfig['font']['letters'][currentChar][columnInChar][bit] == str(1)):
@@ -102,16 +104,16 @@ while True:
 	f.write("\nin loop. day of week is "+str(dayOfWeek))
 	f.close()
 	
+	f = open('/tmp/pad-log.txt', 'a')
+	f.write("\nlast commit day is "+lastCommitDay);
 	if( int(dayOfWeek) in workingDays ):
-		f = open('/tmp/pad-log.txt', 'a')
 		f.write("\nabout to enter commit loop")
-		f.close()
 		commit()
 	else:
 		print workingDays
-		f = open('/tmp/pad-log.txt', 'a')
 		f.write("\nday of week is not in workingdays, so sleeping")
-		f.close()
+
+	f.close()
 		
 	time.sleep(3600) 
 	#time.sleep(10) 
