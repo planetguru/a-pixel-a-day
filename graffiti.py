@@ -16,104 +16,110 @@ tableauFile = "tableau.txt"
 tableauDir = "/export/a-pixel-a-day/" 
 #tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
-toPrint = "&YAHOO"; # use & for testing. It is all '1's
+toPrint = "&YAHOO" # use & for testing. 
 
 # prepare a basic log file
 f = open('/tmp/pad-log.txt', 'a')
 f.write("\nscript has started")
 f.close()
 
+workingDays = [1,2,3,4,5]
+
 fontConfig = json.loads(open('font.json').read())
 fontWidth = int(fontConfig['font']['fontWidth'])+1
 
 startDay = int(time.time())/86400 # days since epoch where 86400 is no. seconds in a day
 #startDay = int(time.time())/60 # minute-long days since epoch where 86400 is no. seconds in a day
-today = startDay
-
-workingDays = [1,2,3,4,5]
-
-# maintain record of last day a commit was made
-# update this whenever a commit is made 
-# check this to prevent >1 commits per day
 
 def commit():
-	# update today to move forward from lastCommitDay on the turn of midnight
 	today = int(time.time()/86400) + 0 
-	#today = int(time.time()/60) + 0 
 
-	# check lastCommitDay
 	global lastCommitDay
-	global f
+	logmessage("\ntoday is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
 	if today != lastCommitDay:
-		# determine whether commit should happen today
-		daysSinceStart = today - startDay
-		f = open('/tmp/pad-log.txt', 'a')
-		f.write("today is "+str(today)+" lastCommitDay is "+str(lastCommitDay))
-		# determine whether commit should happen today
-		daysSinceStart = today - startDay
-		f.write("days since start is "+str(daysSinceStart))
-		currentCharIndex = 0  # identifies which char in the string we are at
-		if( daysSinceStart > 0):   
-			currentCharIndex = int(math.ceil(float(daysSinceStart)/fontWidth)) - 1
-		currentChar = str(toPrint[currentCharIndex])   # eg 'E' in HELLO
-		# eg on day 17, columnInChar is  17%5 + 1 (1 is sunday offset)
-		columnInChar = str((daysSinceStart % 5)+1)
-		global dayOfWeek
-		bit = int(dayOfWeek)-1
-		f.write("currentCharIndex is "+str(currentCharIndex)+" so currentChar is "+currentChar+" column in day is "+columnInChar+" bit is "+str(bit))
-		f.close()
-		# only commit if the bit in this position is a 1
-		pprint.pprint(fontConfig['font']['letters'][currentChar][columnInChar][bit])
-		if( fontConfig['font']['letters'][currentChar][columnInChar][bit] == str(1)):
-			f = open('/tmp/pad-log.txt', 'a')
-			f.write("\nabout to make a commit")
-			f.close()
-			fo=open(tableau,"a")
-			fo.write("-")
-			fo.close();
-			os.chdir(tableauDir)
-			f = open('/tmp/pad-log.txt', 'a')
-			f.write("\nabout to commit to repo")
-			subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
-			f.write("\nabout to push to repo")
-			subprocess.call(['git', 'push'])
-			f.write("\npush to repo done");
-			f.close()
+		# determine which letter I'm on
+		day = today-sd
+		pixcol = day/7
+		f = day%7
+		if(f > 0):
+			pixcol=pixcol+1
+
+		charindex = pixcol/5
+		b = pixcol%5
+		if(b==0 and charindex>0):
+			charindex=charindex-1
+
+		# determine which column of letter
+		if(b==0):
+			col=5
 		else:
-			f = open('/tmp/pad-log.txt', 'a')
-			f.write("\nnot committing this time because bit in this position is ".fontConfig['font']['letters'][currentChar][columnInChar][bit])
-			f.close()
+			col=b
+
+
+		# delete this next line after testing.. it knocks col=5 down to 4
+		col=col-1
+
+		# cast col to string
+		col = str(col)
+		# determine which bit of col
+		if(f==0):
+			bit = 6
+		else:
+			bit = f-1
+
+		# determine whether or not to commit
+		currentChar = str(toPrint[charindex])
+		logmessage("col is "+str(col)+" bit is "+str(bit))
+		logmessage("charindex "+str(charindex)+" gives CHARACTER "+currentChar+": "+str(fontConfig['font']['letters'][currentChar][col]))
+		if(fontConfig['font']['letters'][currentChar][col][bit] ==str(1)):
+			logmessage("\nabout to commit")
+		n=5
+		while n>0:
+			modifyfile()
+			subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
+			subprocess.call(['git', 'push'])
+			logmessage("\npush to repo done")
+			n=n-1
+		else:
+			logmessage("\nnot committing this time ")
 
 		# prevent any more commit attempts today
-		lastCommitDay = today;
+		lastCommitDay = today
 
+def logmessage(message):
+	f = open('/tmp/pad-log.txt', 'a')
+	f.write("\n"+message);
+	f.close()
+	
+def modifyfile():
+	os.chdir(tableauDir)
+	fo=open(tableau,"a")
+	fo.write("-")
+	fo.close()
+	
 # start off setting lastCommitDay as yesterday to force first attempt
 lastCommitDay = int(time.time()/86400) -1
-global dayOfWeek
+global dow
+
 # day of week as int. Sunday is 0.
-dayOfWeek = time.strftime("%w") # int value
-commit()
-f = open('/tmp/pad-log.txt', 'a')
-f.write("\nfirst commit is done - about to enter while loop")
-f.close()
+# remove the +1 from below after testing
+dow = int(time.strftime("%w"))+1 # int value
+global sd
+
+sd = int(startDay) - int(dow)
+if( int(dow) in workingDays ):
+	commit()
+	logmessage("\nfirst commit is done - about to enter while loop")
+else:
+	logmessage("day of week "+str(dow)+" not in workingdays")
 
 # then drop into a loop, always checking lastCommitDay, which gets updated in the commit function
 while True:
-	dayOfWeek = time.strftime("%w") # int value
-	f = open('/tmp/pad-log.txt', 'a')
-	f.write("\nin loop. day of week is "+str(dayOfWeek))
-	f.close()
-	
-	f = open('/tmp/pad-log.txt', 'a')
-	f.write("\nlast commit day is "+lastCommitDay);
-	if( int(dayOfWeek) in workingDays ):
-		f.write("\nabout to enter commit loop")
+	logmessage("\nlast commit day is "+str(lastCommitDay)+" day of week is "+str(dow))
+	if( int(dow) in workingDays ):
+		f.write("\nabout to enter commit function. ")
 		commit()
 	else:
-		print workingDays
-		f.write("\nday of week is not in workingdays, so sleeping")
-
+		logmessage("\nday of week is not in workingdays, so sleeping")
 	f.close()
-		
 	time.sleep(3600) 
-	#time.sleep(10) 
