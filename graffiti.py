@@ -14,7 +14,7 @@ import pprint
 
 tableauFile = "tableau.txt"
 tableauDir = "/export/a-pixel-a-day/" 
-#tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
+tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
 toPrint = "&YAHOO" # use & for testing. 
 
@@ -39,25 +39,24 @@ def commit():
 	if today != lastCommitDay:
 		# determine which letter I'm on
 		day = today-sd
+
+		# pixcol is the physical column on the display screen
 		pixcol = day/7
 		f = day%7
 		if(f > 0):
 			pixcol=pixcol+1
 
+		# figure out which character in the printed string we are on today
 		charindex = pixcol/5
 		b = pixcol%5
 		if(b==0 and charindex>0):
 			charindex=charindex-1
 
-		# determine which column of letter
+		# determine which column of the letter spec from font definition
 		if(b==0):
 			col=5
 		else:
 			col=b
-
-
-		# delete this next line after testing.. it knocks col=5 down to 4
-		col=col-1
 
 		# cast col to string
 		col = str(col)
@@ -73,22 +72,26 @@ def commit():
 		logmessage("charindex "+str(charindex)+" gives CHARACTER "+currentChar+": "+str(fontConfig['font']['letters'][currentChar][col]))
 		if(fontConfig['font']['letters'][currentChar][col][bit] ==str(1)):
 			logmessage("\nabout to commit")
+
 		n=5
 		while n>0:
 			modifyfile()
-			subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
-			subprocess.call(['git', 'push'])
-			logmessage("\npush to repo done")
-			n=n-1
+			commitandpush()
 		else:
 			logmessage("\nnot committing this time ")
 
 		# prevent any more commit attempts today
 		lastCommitDay = today
 
+def commitandpush():
+	subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
+	subprocess.call(['git', 'push'])
+	logmessage("\npush to repo done")
+	n=n-1
+
 def logmessage(message):
 	f = open('/tmp/pad-log.txt', 'a')
-	f.write("\n"+message);
+	f.write("\n"+message)
 	f.close()
 	
 def modifyfile():
@@ -102,8 +105,7 @@ lastCommitDay = int(time.time()/86400) -1
 global dow
 
 # day of week as int. Sunday is 0.
-# remove the +1 from below after testing
-dow = int(time.strftime("%w"))+1 # int value
+dow = int(time.strftime("%w")) # int value
 global sd
 
 sd = int(startDay) - int(dow)
