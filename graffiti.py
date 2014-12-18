@@ -14,7 +14,7 @@ import pprint
 
 tableauFile = "tableau.txt"
 tableauDir = "/export/a-pixel-a-day/" 
-tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
+#tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
 toPrint = "&YAHOO" # use & for testing. 
 
@@ -77,6 +77,7 @@ def commit():
 		while n>0:
 			modifyfile()
 			commitandpush()
+			n=n-1
 		else:
 			logmessage("\nnot committing this time ")
 
@@ -87,7 +88,6 @@ def commitandpush():
 	subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
 	subprocess.call(['git', 'push'])
 	logmessage("\npush to repo done")
-	n=n-1
 
 def logmessage(message):
 	f = open('/tmp/pad-log.txt', 'a')
@@ -119,7 +119,7 @@ else:
 while True:
 	logmessage("\nlast commit day is "+str(lastCommitDay)+" day of week is "+str(dow))
 	if( int(dow) in workingDays ):
-		f.write("\nabout to enter commit function. ")
+		logmessage("\nabout to enter commit function.")
 		commit()
 	else:
 		logmessage("\nday of week is not in workingdays, so sleeping")
