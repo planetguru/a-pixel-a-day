@@ -97,11 +97,6 @@ def modifyfile():
 	fo.write("-")
 	fo.close()
 
-def getFromGit():
-	os.chdir(tableauDir)
-	subprocess.call(['git', 'pull'])
-	logmessage("\npush to repo done")
-
 
 #if > 0 lines in tableau, this is not the first day. Read start time from file
 flen = file_len(tableau)
