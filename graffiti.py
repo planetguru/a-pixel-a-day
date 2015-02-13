@@ -14,7 +14,7 @@ import pprint
 
 tableauFile = "tableau.txt"
 #tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
-tableauDir = "/export/a-pixel-a-day"
+tableauDir = "/export/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
 toPrint = "YAHOO!" # use & for testing. 
 
