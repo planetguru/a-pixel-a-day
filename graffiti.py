@@ -16,11 +16,11 @@ tableauFile = "tableau.txt"
 #tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
 tableauDir = "/export/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
-toPrint = "YAHOO!" # use & for testing. 
+toPrint = "ZYAHOO!" # use & for testing. 
 
 workingDays = [1,2,3,4,5]
 
-fontConfig = json.loads(open('font.json').read())
+fontConfig = json.loads(open(tableauDir+'font.json').read())
 fontWidth = int(fontConfig['font']['fontWidth'])+1
 
 # determine no. of lines in file
