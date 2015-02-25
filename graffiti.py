@@ -13,8 +13,8 @@ import os
 import pprint
 
 tableauFile = "tableau.txt"
-#tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
-tableauDir = "/export/a-pixel-a-day/"
+tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
+#tableauDir = "/export/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
 toPrint = "YAHOO" # use & for testing. 
 
@@ -68,6 +68,7 @@ def commit():
 	# determine whether or not to commit
 	currentChar = str(toPrint[charindex])
 	logmessage("col is "+col+" bit is "+str(bit))
+	sys.exit();
 	logmessage("charindex "+str(charindex)+" gives CHARACTER "+currentChar+": "+str(fontConfig['font']['letters'][currentChar][col]))
 	if(fontConfig['font']['letters'][currentChar][col][bit] ==str(1)):
 		logmessage("\nabout to commit")
