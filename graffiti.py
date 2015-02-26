@@ -60,15 +60,16 @@ def commit():
 	# cast col to string
 	col = str(col)
 	# determine which bit of col
-	if(f==0):
-		bit = 6
+	if(f==0 or f==1):
+		logmessage("f is "+str(f)+". Assuming saturday or sunday so doing nothing")
+		#bit = 6
+		sys.exit();
 	else:
-		bit = f-1
+		bit = f
 
 	# determine whether or not to commit
 	currentChar = str(toPrint[charindex])
 	logmessage("col is "+col+" bit is "+str(bit))
-	sys.exit();
 	logmessage("charindex "+str(charindex)+" gives CHARACTER "+currentChar+": "+str(fontConfig['font']['letters'][currentChar][col]))
 	if(fontConfig['font']['letters'][currentChar][col][bit] ==str(1)):
 		logmessage("\nabout to commit")
