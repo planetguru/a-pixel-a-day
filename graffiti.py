@@ -12,9 +12,11 @@ import subprocess
 import os
 import pprint
 
+from time import strftime
+
 tableauFile = "tableau.txt"
-# tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
-tableauDir = "/export/a-pixel-a-day/"
+tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
+#tableauDir = "/export/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
 toPrint = "YAHOO" # use & for testing. 
 
@@ -84,13 +86,14 @@ def commit():
 
 
 def commitandpush():
-	subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
-	subprocess.call(['git', 'push'])
+#	subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
+	#subprocess.call(['git', 'push'])
 	logmessage("\npush to repo done")
 
 def logmessage(message):
+        t=strftime("%a %d %b %Y %H:%M:%S ")
 	f = open('/tmp/pad-log.txt', 'a')
-	f.write("\n"+message)
+	f.write("\n"+t+message)
 	f.close()
 	
 def modifyfile():
