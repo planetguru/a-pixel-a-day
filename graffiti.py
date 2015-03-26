@@ -15,8 +15,8 @@ import pprint
 from time import strftime
 
 tableauFile = "tableau.txt"
-tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
-#tableauDir = "/export/a-pixel-a-day/"
+#tableauDir = "/Users/clacy/Development/web/a-pixel-a-day/"
+tableauDir = "/export/a-pixel-a-day/"
 tableau = tableauDir + tableauFile
 toPrint = "YAHOO" # use & for testing. 
 
@@ -39,7 +39,9 @@ def commit():
 	today = int(time.time()/86400) + 0 
 
 	# determine which letter I'm on
-	day = today-sd
+	day = today-startDay
+	logmessage("today is "+str(today)+" startDay is "+str(startDay)+" day is "+str(day))
+	sys.exit();
 
 	# pixcol is the physical column on the display screen
 	pixcol = day/7
@@ -65,7 +67,6 @@ def commit():
 	if(f==0 or f==1):
 		logmessage("f is "+str(f)+". Assuming saturday or sunday so doing nothing")
 		#bit = 6
-		sys.exit();
 	else:
 		bit = f
 
@@ -82,18 +83,18 @@ def commit():
 			commitandpush()
 			n=n-1
 	else:
-		logmessage("\nnot committing this time ")
+		logmessage("not committing this time ")
 
 
 def commitandpush():
-#	subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
-	#subprocess.call(['git', 'push'])
-	logmessage("\npush to repo done")
+	subprocess.call(['git', 'commit', '--allow-empty', '-m', '""', 'README.md'])
+	subprocess.call(['git', 'push'])
+	logmessage("push to repo done")
 
 def logmessage(message):
         t=strftime("%a %d %b %Y %H:%M:%S ")
 	f = open('/tmp/pad-log.txt', 'a')
-	f.write("\n"+t+message)
+	f.write(""+t+message+"\n")
 	f.close()
 	
 def modifyfile():
@@ -102,24 +103,24 @@ def modifyfile():
 	fo.write("-")
 	fo.close()
 
+logmessage("\n\n\n")
 
 #if > 0 lines in tableau, this is not the first day. Read start time from file
 flen = file_len(tableau)
 if flen > 0:
         f = open(tableau)
         startTime = int(f.readline())
-
+	logmessage("start time was "+str(startTime))
 else:
 	startTime = int(time.time())  # write start time to file - it's now
 	f = open(tableau)
         with open(tableau, 'a') as tab:
               tab.write(str(startTime)+"\n\n")
 
+global startDay
 startDay = startTime/86400 # days since epoch where 86400 is no. seconds in a day
+logmessage("start day was "+str(startDay))
 dow = int(time.strftime("%w")) # day of week as int. Sunday is 0
-
-global sd
-sd = int(startDay) - int(dow)
 
 if( int(dow) in workingDays ):
 	commit()
